@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+<world name="myworld">
+ <include>
+	<uri>model://sun</uri>
+ </include>
+
+ <include>
+	<uri>model://ground_plane</uri>
+ </include>
+
+
+ <model name="tsa_room">
+ 	<include>
+ 		<pose>0 0 0 0 0 0</pose>
+ 		<static>true</static>
+ 		<uri>model://tsa_room</uri>
+ 	</include>
+ </model>
+
+<model name="box_model">
+	<include>
+		<name>box1</name>
+		<pose>1 1 0.1 0 0 0</pose>
+		<static>true</static>
+		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>box2</name>
+		<pose>5 3 0.1 0 0 0</pose>
+		<static>true</static>
+		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>box3</name>
+		<pose>-5 -4 0.1 0 0 0</pose>
+		<static>true</static>
+		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>box4</name>
+		<pose>6 -1 0.1 0 0 0</pose>
+		<static>true</static>
+		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>box5</name>
+		<pose>1 -1 0.1 0 0 0</pose>
+		<scale>1.0 1.0 5.0</scale>
+		<static>true</static>
+		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>table_1</name>
+ 		<pose>6 2 0.1 0 0 0</pose>
+ 		<scale>2.0 1.0 1.0</scale>
+ 		<static>true</static>
+ 		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>table_2</name>
+ 		<pose>-2 -2 0.1 0 0 1.57</pose>
+ 		<scale>1 3 1</scale>
+ 		<static>true</static>
+ 		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>table_3</name>
+ 		<pose>-2 2 0.1 0 0 -1.57</pose>
+ 		<static>true</static>
+ 		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>cupboard_1</name>
+ 		<pose>0 -4.5 0.1 0 0 0</pose>
+ 		<scale>2.0 1.0 5.0</scale>
+		<static>true</static>
+ 		<uri>model://box_model</uri>
+ 	</include>
+ 	<include>
+		<name>cupboard_2</name>
+ 		<pose>0 4.5 0.1 0 0 0</pose>
+ 		<scale>2.0 1.0 5.0</scale>
+		<static>true</static>
+ 		<uri>model://box_model</uri>
+ 	</include>
+</model>
+
+<population name="can_population1">
+      <model name="can_population">
+        <include>
+          <static>true</static>
+          <uri>model://coke_can</uri>
+        </include>
+      </model>
+      <pose>-7 1.5 0 0 0 0</pose>
+      <box>
+        <size>2 2 0.01</size>
+      </box>
+      <model_count>5</model_count>
+      <distribution>
+        <type>random</type>
+      </distribution>
+ </population>
+
+<!-- <model name="table_model">
+	<include>
+		<name>table_1</name>
+ 		<pose>6 0 0.1 0 0 0</pose>
+ 		<static>true</static>
+ 		<uri>model://table_model</uri>
+ 	</include>
+ 	<include>
+		<name>table_2</name>
+ 		<pose>-2 -2 0.1 0 0 1.57</pose>
+ 		<static>true</static>
+ 		<uri>model://table_model</uri>
+ 	</include>
+ 	<include>
+		<name>table_3</name>
+ 		<pose>-2 2 0.1 0 0 -1.57</pose>
+ 		<static>true</static>
+ 		<uri>model://table_model</uri>
+ 	</include>
+ </model> -->
+
+<!-- <model name="cupboard_model">
+	<include>
+		<name>cupboard_1</name>
+ 		<pose>0 -4.5 0.1 0 0 0</pose>
+		<static>true</static>
+ 		<uri>model://cupboard_model</uri>
+ 	</include>
+ 	<include>
+		<name>cupboard_2</name>
+ 		<pose>0 4.5 0.1 0 0 0</pose>
+		<static>true</static>
+ 		<uri>model://cupboard_model</uri>
+ 	</include>
+	
+	
+</model> -->
+
+<!-- <model name="rover_model">
+ 	<include>
+ 		<pose>0 0 0.5 0 0 0</pose>
+ 		<static>false</static>
+ 		<uri>model://rover_model</uri>
+ 	</include>
+ </model> -->
+
+ <!-- <physics type='ode'>
+  <max_step_size>0.01</max_step_size>
+  <real_time_factor>1</real_time_factor>
+  <gravity>0 0 -9.8</gravity>
+ </physics> -->
+</world>
+</sdf>

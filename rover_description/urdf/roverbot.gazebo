@@ -1,0 +1,227 @@
+<?xml version="1.0"?>
+<robot name="rover_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<gazebo reference="chassis">
+  <material>Gazebo/Orange</material>
+</gazebo>
+
+
+<gazebo reference="caster_wheel">
+  <mu1>0.0</mu1>
+  <mu2>0.0</mu2>
+  <material>Gazebo/Red</material>
+</gazebo>
+
+<gazebo reference="left_wheel">
+  <mu1 value="1.0"/>
+  <mu2 value="1.0"/>
+  <kp  value="10000000.0" />
+  <kd  value="1.0" />
+  <fdir1 value="1 0 0"/>
+  <material>Gazebo/Black</material>
+</gazebo>
+
+<gazebo reference="right_wheel">
+  <mu1 value="1.0"/>
+  <mu2 value="1.0"/>
+  <kp  value="10000000.0" />
+  <kd  value="1.0" />
+  <fdir1 value="1 0 0"/>
+  <material>Gazebo/Black</material>
+</gazebo>
+
+<gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <robotNamespace>/rover_bot</robotNamespace>
+  </plugin>
+</gazebo>
+
+<gazebo>
+  <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+    <alwaysOn>true</alwaysOn>
+    <updateRate>100</updateRate>
+    <leftJoint>left_wheel_hinge</leftJoint>
+    <rightJoint>right_wheel_hinge</rightJoint>
+    <wheelSeparation>${chassisWidth+wheelWidth}</wheelSeparation>
+    <wheelDiameter>${2*wheelRadius}</wheelDiameter>
+    <torque>20</torque>
+    <commandTopic>rover_bot/cmd_vel</commandTopic>
+    <odometryTopic>rover_bot/odom_diffdrive</odometryTopic>
+    <odometryFrame>odom</odometryFrame>
+    <robotBaseFrame>footprint</robotBaseFrame>
+  </plugin>
+</gazebo>
+
+ <gazebo reference="camera">
+  <material>Gazebo/Grey</material>
+  <sensor type="camera" name="camera1">
+      <update_rate>10.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>640</width>
+          <height>480</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>rover_bot/camera1</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>camera_link</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
+    </sensor>
+</gazebo>
+
+<gazebo reference="center_distance_sensor">
+    <sensor type="ray" name="head_hukoyu_sensor">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.02</min_angle>
+            <max_angle>0.02</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.01</min_angle>
+            <max_angle>0.01</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.06</min>
+          <max>30</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+
+      <plugin name="gazebo_ros_range" filename="libgazebo_ros_range.so">
+        <gaussianNoise>0.005</gaussianNoise>
+        <topicName>rover_bot/distance_sensor/center_range</topicName>
+        <frameName>center_distance_sensor</frameName>
+      </plugin>
+    </sensor>
+</gazebo>
+
+<gazebo reference="left_distance_sensor">
+    <sensor type="ray" name="head_hukoyu_sensor">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.02</min_angle>
+            <max_angle>0.02</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.01</min_angle>
+            <max_angle>0.01</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.06</min>
+          <max>30</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+
+      <plugin name="gazebo_ros_range" filename="libgazebo_ros_range.so">
+        <gaussianNoise>0.005</gaussianNoise>
+        <topicName>rover_bot/distance_sensor/left_range</topicName>
+        <frameName>left_distance_sensor</frameName>
+      </plugin>
+    </sensor>
+</gazebo>
+
+<gazebo reference="right_distance_sensor">
+    <sensor type="ray" name="head_hukoyu_sensor">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.02</min_angle>
+            <max_angle>0.02</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>5</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.01</min_angle>
+            <max_angle>0.01</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.06</min>
+          <max>30</max>
+          <resolution>0.01</resolution>
+        </range>
+      </ray>
+
+      <plugin name="gazebo_ros_range" filename="libgazebo_ros_range.so">
+        <gaussianNoise>0.005</gaussianNoise>
+        <topicName>rover_bot/distance_sensor/right_range</topicName>
+        <frameName>right_distance_sensor</frameName>
+      </plugin>
+    </sensor>
+</gazebo>
+
+<gazebo reference="hokuyo_lidar">
+    <sensor type="gpu_ray" name="head_hokuyo_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>40</update_rate>
+   <ray>
+    <scan>
+      <horizontal>
+        <samples>720</samples>
+        <resolution>1</resolution>
+        <min_angle>-3.125</min_angle>
+        <max_angle>3.1415</max_angle>
+      </horizontal>
+    </scan>
+    <range>
+      <min>0.10</min>
+      <max>30.0</max>
+      <resolution>0.01</resolution>
+    </range>
+    <noise>
+      <type>gaussian</type>
+      <mean>0.0</mean>
+      <stddev>0.01</stddev>
+    </noise>
+  </ray>
+  <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_gpu_laser.so">
+    <topicName>/roverbot/laser/scan</topicName>
+    <frameName>hokuyo_lidar</frameName>
+  </plugin>
+</sensor>
+</gazebo>
+</robot>

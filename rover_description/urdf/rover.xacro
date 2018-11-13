@@ -1,0 +1,429 @@
+<?xml version="1.0"?>
+<robot name="rover_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:property name="PI" value="3.1415926535897931"/>
+
+<xacro:property name="chassisHeight" value="0.1"/>
+<xacro:property name="chassisLength" value="0.4"/>
+<xacro:property name="chassisWidth" value="0.2"/>
+<xacro:property name="chassisMass" value="10"/>
+<xacro:property name="topChassisMass" value="1"/>
+<xacro:property name="zHeight" value="0.1"/>
+
+<xacro:property name="casterRadius" value="0.05"/>
+<xacro:property name="casterMass" value="1"/>
+
+<xacro:property name="wheelWidth" value="0.05"/>
+<xacro:property name="wheelRadius" value="0.1"/>
+<xacro:property name="wheelPos" value="0.2"/>
+<xacro:property name="wheelMass" value="1"/>
+
+<xacro:property name="cameraSize" value="0.05"/>
+<xacro:property name="cameraMass" value="0.025"/>
+
+<xacro:property name="distanceSensorSize" value="0.05"/>
+<xacro:property name="distanceSensorMass" value="0.025"/>
+
+<xacro:property name="sensorBoxHeight" value="0.1"/>
+<xacro:property name="sensorBoxLength" value="0.1"/>
+<xacro:property name="sensorBoxWidth" value="0.2"/>
+<xacro:property name="sensorBoxMass" value="0.05"/>
+
+<xacro:include filename="$(find rover_description)/urdf/roverbot.gazebo" />
+<xacro:include filename="$(find rover_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find rover_description)/urdf/macros.xacro" />
+
+<link name="footprint" />
+
+<joint name="base_joint" type="fixed">
+  <parent link="footprint"/>
+  <child link="chassis"/>
+</joint>
+
+<link name='chassis'>
+  <collision> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+    </geometry> 
+  </collision>
+  <visual> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+    </geometry> 
+    <material name="orange"/>
+  </visual>
+  <inertial> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <mass value="${chassisMass}"/> 
+    <box_inertia m="${chassisMass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight}"/>
+  </inertial>
+</link>
+
+ <joint name="fixed" type="fixed">
+  <parent link="chassis"/>
+  <child link="caster_wheel"/>
+</joint>
+
+
+<link name="caster_wheel">
+  <collision>
+    <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+wheelRadius}" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius="${casterRadius}"/>
+    </geometry>
+  </collision>
+  
+  <visual>
+    <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+wheelRadius}" rpy="0 0 0"/>
+    <geometry>
+      <sphere radius="${casterRadius}"/>
+    </geometry>
+    <material name="red"/>
+  </visual>
+
+  <inertial>
+    <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+wheelRadius}" rpy="0 0 0"/>
+    <mass value="${casterMass}"/>
+    <sphere_inertia m="${casterMass}" r="${casterRadius}"/>
+  </inertial>
+</link>
+
+<link name="left_wheel">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}" />
+    <geometry>
+      <cylinder length="${wheelWidth}" radius="${wheelRadius}"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}" />
+    <geometry>
+      <cylinder length="${wheelWidth}" radius="${wheelRadius}"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}" />
+    <mass value="${wheelMass}"/>
+    <cylinder_inertia m="${wheelMass}" r="${wheelRadius}" h="${wheelWidth}"/>
+  </inertial>
+</link>
+
+<joint name="left_wheel_hinge" type="continuous">
+  <parent link="chassis"/>
+  <child link="left_wheel"/>
+  <origin xyz="${-wheelPos+chassisLength/2} ${1*wheelWidth/2+1*chassisWidth/2} ${wheelRadius}" rpy="0 -${PI/2} 0" />
+  <axis xyz="0 1 0" rpy="0 0 0" />
+</joint>
+
+
+<link name="right_wheel">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}" />
+    <geometry>
+      <cylinder length="${wheelWidth}" radius="${wheelRadius}"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}" />
+    <geometry>
+      <cylinder length="${wheelWidth}" radius="${wheelRadius}"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+
+  <inertial>
+    <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}" />
+    <mass value="${wheelMass}"/>
+    <cylinder_inertia m="${wheelMass}" r="${wheelRadius}" h="${wheelWidth}"/>
+  </inertial>
+</link>
+
+<joint name="right_wheel_hinge" type="continuous">
+  <parent link="chassis"/>
+  <child link="right_wheel"/>
+  <origin xyz="${-wheelPos+chassisLength/2} ${-1*wheelWidth/2 + -1*chassisWidth/2} ${wheelRadius}" rpy="0 ${PI/2} 0" />
+  <axis xyz="0 1 0" rpy="0 0 0" />
+</joint>
+
+
+<transmission name="left_trans">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="left_wheel_hinge">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="leftMotor">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
+
+<transmission name="right_trans">
+  <type>transmission_interface/SimpleTransmission</type>
+  <joint name="right_wheel_hinge">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+  </joint>
+  <actuator name="rightMotor">
+    <hardwareInterface>EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+  </actuator>
+</transmission>
+
+<link name='sensor_box'>
+  <collision> 
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${sensorBoxLength} ${sensorBoxWidth} ${sensorBoxHeight}"/> 
+    </geometry> 
+  </collision>
+  <visual> 
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${sensorBoxLength} ${sensorBoxWidth} ${sensorBoxHeight}"/> 
+    </geometry> 
+    <material name="orange"/>
+  </visual>
+  <inertial> 
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
+    <mass value="${sensorBoxMass}"/> 
+    <box_inertia m="${sensorBoxMass}" x="${sensorBoxLength}" y="${sensorBoxWidth}" z="${sensorBoxHeight}"/>
+  </inertial>
+</link>
+
+<joint name="sensor_box_joint" type="fixed">
+    <origin xyz="${chassisLength/2} 0 ${wheelRadius+sensorBoxHeight/2 + chassisHeight/2}" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="sensor_box"/>
+</joint>
+
+<joint name="camera_joint" type="fixed">
+    <origin xyz="${sensorBoxLength/2+cameraSize/2} 0 ${sensorBoxHeight/2-cameraSize/2}" rpy="0 0 0"/>
+    <parent link="sensor_box"/>
+    <child link="camera"/>
+</joint>
+
+<link name="camera">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+    </geometry>
+    <material name="blue"/>
+  </visual>
+
+  <inertial>
+    <mass value="${cameraMass}" />
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+  </inertial>
+</link> 
+
+<joint name="center_distance_sensor_joint" type="fixed">
+    <origin xyz="${sensorBoxLength/2 + distanceSensorSize/2} 0 ${sensorBoxHeight/2 - 2*cameraSize}" rpy="0 0 0"/>
+    <parent link="sensor_box"/>
+    <child link="center_distance_sensor"/>
+</joint>
+
+<link name="center_distance_sensor">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${distanceSensorSize} ${distanceSensorSize} ${distanceSensorSize}"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${distanceSensorSize} ${distanceSensorSize} ${distanceSensorSize}"/>
+    </geometry>
+    <material name="blue"/>
+  </visual>
+
+  <inertial>
+    <mass value="${distanceSensorMass}" />
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <box_inertia m="${distanceSensorMass}" x="${distanceSensorSize}" y="${distanceSensorSize}" z="${distanceSensorSize}" />
+  </inertial>
+</link> 
+
+<joint name="left_distance_sensor_joint" type="fixed">
+    <origin xyz="${sensorBoxLength/2 + distanceSensorSize/2} ${sensorBoxWidth/2 + distanceSensorSize/2} ${sensorBoxHeight/2 - 2*cameraSize}" rpy="0 0 ${PI/4}"/>
+    <parent link="sensor_box"/>
+    <child link="left_distance_sensor"/>
+</joint>
+
+<link name="left_distance_sensor">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${distanceSensorSize} ${distanceSensorSize} ${distanceSensorSize}"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${distanceSensorSize} ${distanceSensorSize} ${distanceSensorSize}"/>
+    </geometry>
+    <material name="red"/>
+  </visual>
+
+  <inertial>
+    <mass value="${distanceSensorMass}" />
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <box_inertia m="${distanceSensorMass}" x="${distanceSensorSize}" y="${distanceSensorSize}" z="${distanceSensorSize}" />
+  </inertial>
+</link> 
+
+<joint name="right_distance_sensor_joint" type="fixed">
+    <origin xyz="${sensorBoxLength/2 + distanceSensorSize/2} ${-sensorBoxWidth/2 - distanceSensorSize/2} ${sensorBoxHeight/2 - 2*cameraSize}" rpy="0 0 ${-PI/4}"/>
+    <parent link="sensor_box"/>
+    <child link="right_distance_sensor"/>
+</joint>
+
+<link name="right_distance_sensor">
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${distanceSensorSize} ${distanceSensorSize} ${distanceSensorSize}"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <box size="${distanceSensorSize} ${distanceSensorSize} ${distanceSensorSize}"/>
+    </geometry>
+    <material name="green"/>
+  </visual>
+
+  <inertial>
+    <mass value="${distanceSensorMass}" />
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <box_inertia m="${distanceSensorMass}" x="${distanceSensorSize}" y="${distanceSensorSize}" z="${distanceSensorSize}" />
+  </inertial>
+</link> 
+
+<joint name="back_sensor_box_joint" type="fixed">
+    <origin xyz="${-chassisLength/2} 0 ${wheelRadius+chassisHeight}" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="back_sensor_box"/>
+</joint>
+
+<link name='back_sensor_box'>
+  <collision> 
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${sensorBoxLength} ${sensorBoxWidth} ${sensorBoxHeight}"/> 
+    </geometry> 
+  </collision>
+  <visual> 
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${sensorBoxLength} ${sensorBoxWidth} ${sensorBoxHeight}"/> 
+    </geometry> 
+    <material name="orange"/>
+  </visual>
+  <inertial> 
+    <origin xyz="0 0 0" rpy="0 0 0"/> 
+    <mass value="${sensorBoxMass}"/> 
+    <box_inertia m="${sensorBoxMass}" x="${sensorBoxLength}" y="${sensorBoxWidth}" z="${sensorBoxHeight}"/>
+  </inertial>
+</link>
+
+
+<joint name="center_chassis_joint" type="fixed">
+  <origin xyz="0 0 ${chassisHeight/2}" rpy="0 0 0"/>
+  <parent link="chassis"/>
+  <child link="center_box"/>
+</joint>
+<link name='center_box'>
+  <collision> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${chassisLength/4} ${chassisWidth/2} ${sensorBoxHeight + chassisWidth/2}"/> 
+    </geometry> 
+  </collision>
+  <visual> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${chassisLength/4} ${chassisWidth/2} ${sensorBoxHeight + chassisWidth/2}"/> 
+    </geometry> 
+    <material name="orange"/>
+  </visual>
+  <inertial> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <mass value="${topChassisMass}"/> 
+    <box_inertia m="${topChassisMass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight/2}"/>
+  </inertial>
+</link>
+
+<joint name="top_chassis_joint" type="fixed">
+  <origin xyz="0 0 ${sensorBoxHeight}" rpy="0 0 0"/>
+  <parent link="center_box"/>
+  <child link="top_chassis"/>
+</joint>
+<link name='top_chassis'>
+  <collision> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${chassisLength} ${chassisWidth} ${chassisHeight/2}"/> 
+    </geometry> 
+  </collision>
+  <visual> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <geometry> 
+      <box size="${chassisLength} ${chassisWidth} ${chassisHeight/2}"/> 
+    </geometry> 
+    <material name="orange"/>
+  </visual>
+  <inertial> 
+    <origin xyz="0 0 ${zHeight}" rpy="0 0 0"/> 
+    <mass value="${topChassisMass}"/> 
+    <box_inertia m="${topChassisMass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight/2}"/>
+  </inertial>
+</link>
+
+
+<joint name="hokuyo_joint" type="fixed">
+<origin xyz="${zHeight} 0 ${sensorBoxHeight/2 + chassisHeight}" rpy="0 0 0"/>
+<parent link="top_chassis"/>
+<child link="hokuyo_lidar"/>
+</joint>
+
+<!-- Hokuyo Laser -->
+<link name="hokuyo_lidar">
+<collision>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+  <geometry>
+    <box size="0.1 0.1 0.1"/>
+  </geometry>
+</collision>
+
+<visual>
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+  <geometry>
+    <mesh filename="$(find rover_gazebo)/models/hukoyu.dae"/>
+  </geometry>
+</visual>
+
+<inertial>
+  <mass value="1e-5" />
+  <origin xyz="0 0 0" rpy="0 0 0"/>
+  <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+</inertial>
+</link>
+
+</robot>

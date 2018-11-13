@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<sdf version="1.6">
+<model name="cupboard_model">
+  <pose>0 0 0.1 0 0 0</pose>
+  <static>true</static>
+    <link name= "body">
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>1 1 5</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh><uri>model://cupboard_model_3d.dae</uri></mesh>
+        </geometry>
+        <material name="Grey">
+          <ambient>1 1 0.67 1</ambient>
+          <diffuse>0.67 0.67 0.67 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+          <emissive>0 0 0 0</emissive>
+        </material>
+      </visual>
+  </link>
+  </model>
+</sdf>

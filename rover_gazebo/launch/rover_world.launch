@@ -1,0 +1,16 @@
+<launch>	
+	  <!-- this is empty world with room space -->
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">	    
+		<arg name="world_name" value="$(find rover_gazebo)/worlds/rover.world"/>	    
+		<arg name="gui" value="true"/>	  
+	</include>
+	
+	<!-- this is rover -->
+	<param name="robot_description" command="$(find xacro)/xacro.py '$(find rover_description)/urdf/rover.xacro'" />
+	
+	<node name="rover_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+ 	args="-urdf -param robot_description -model rover_bot" />	
+
+	<include file="$(find rover_control)/launch/roverbot_control.launch" />
+
+</launch>
