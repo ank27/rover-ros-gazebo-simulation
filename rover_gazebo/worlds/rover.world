@@ -5,6 +5,8 @@
 	<uri>model://sun</uri>
  </include>
 
+ <gravity>0 0 -9.8</gravity>
+
  <include>
 	<uri>model://ground_plane</uri>
  </include>
@@ -103,6 +105,14 @@
       </distribution>
  </population>
 
+
+ <gui fullscreen="0">
+ 	<camera name="rover-camera">
+ 		<pose>0 0 0 0 0 0</pose>
+ 		<view_controller>orbit</view_controller>
+ 	</camera>
+ </gui>
+
 <!-- <model name="table_model">
 	<include>
 		<name>table_1</name>
@@ -152,7 +162,7 @@
  <!-- <physics type='ode'>
   <max_step_size>0.01</max_step_size>
   <real_time_factor>1</real_time_factor>
-  <gravity>0 0 -9.8</gravity>
+  
  </physics> -->
 </world>
 </sdf>

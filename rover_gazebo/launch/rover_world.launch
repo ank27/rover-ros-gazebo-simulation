@@ -1,16 +1,27 @@
-<launch>	
-	  <!-- this is empty world with room space -->
-	<include file="$(find gazebo_ros)/launch/empty_world.launch">	    
-		<arg name="world_name" value="$(find rover_gazebo)/worlds/rover.world"/>	    
-		<arg name="gui" value="true"/>	  
+<launch>
+	
+	<arg name="robot_namespace" value="mybot"/>
+	<arg name="tf_prefix" value="rover_bot_tf"/>
+	<arg name="use_sim_time" value="true"/>
+	<arg name="gui" value="true"/>
+
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="$(find rover_gazebo)/worlds/rover.world"/>
+		<arg name="gui" value="$(arg gui)"/>	
+		<arg name="use_sim_time" value="$(arg use_sim_time)"/>  
 	</include>
 	
-	<!-- this is rover -->
-	<param name="robot_description" command="$(find xacro)/xacro.py '$(find rover_description)/urdf/rover.xacro'" />
+	<param name="robot_description" command="$(find xacro)/xacro '$(find rover_description)/urdf/mybot.xacro'
+		--inorder
+		robot_namespace:=$(arg robot_namespace)
+		" />
 	
 	<node name="rover_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
- 	args="-urdf -param robot_description -model rover_bot" />	
+ 	args="-urdf -param robot_description -model $(arg robot_namespace)" />
 
 	<include file="$(find rover_control)/launch/roverbot_control.launch" />
 
+	<!-- <include file="$(find rover_rviz)/launch/rover_rviz.launch"/>
+
+	<include file="$(find rover_navigation)/launch/rover_gmapping.launch"/> -->
 </launch>
