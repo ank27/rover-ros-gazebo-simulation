@@ -1,2 +1,2 @@
 # rover-ros-gazebo-simulation
-Simulation files for gazebo to create differential drive with ros.
+A Differential drive robot simulated in Gazebo using urdf files as robot description. 
