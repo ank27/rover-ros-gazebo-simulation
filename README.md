@@ -7,10 +7,15 @@ ROS-Kinetic
 Ubuntu 16.04
 
 How to run :
+
 Create a catkin_workspace
+
 cd ~/catkin_workspace
+
 mkdir src
+
 Clone the repo
+
 roslaunch rover_gazebo rover_world.launch
 
 
